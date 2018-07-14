@@ -9,17 +9,19 @@
 class DataConnect
 {
     private $KEY = "ZNZV1BXnl0kRebCqIy6Njuo2ZqXgy6hXzPvMOY9Iw55414T0xINWSrF%2Btx06PvMO7aClJHwjEPf0CLZT0ojhrg%3D%3D";
+    private $list = [];
 
     function __construct()
     {
-        require 'DetailData.php';
+        require_once('DetailData.php');
+        require_once('DatasVO.php');
     }
 
     function getDataLists()
     {
         $ch = curl_init();
         $url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/period'; /*URL*/
-        $queryParams = '?' . urlencode('ServiceKey') . '='.$this->KEY; /*Service Key*/
+        $queryParams = '?' . urlencode("serviceKey") . '='.$this->KEY; /*Service Key*/
 
         curl_setopt($ch, CURLOPT_URL, $url . $queryParams);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -28,7 +30,27 @@ class DataConnect
         $response = curl_exec($ch);
         curl_close($ch);
 
-        return $response;
+        $response = simplexml_load_string($response);
+        $response = $response->msgBody->perforList;
+
+        foreach($response as $array){
+            $data = new DatasVO;
+
+            $data->setSeq($array->seq);
+            $data->setTitle($array->title);
+            $data->setStartDate($array->startDate);
+            $data->setEndDate($array->endDate);
+            $data->setPlace($array->place);
+            $data->setRealmName($array->realmNamme);
+            $data->setArea($array->area);
+            $data->setThumbnail($array->thumbnail);
+            $data->setGpsX($array->gpsX);
+            $data->setGpsY($array->gpsY);
+
+            array_push($this->list, $data);
+        }
+
+        return $this->list;
     }
 
     function getDetailData($seq)
@@ -46,35 +68,32 @@ class DataConnect
         curl_close($ch);            // $ch 닫음
 
         $response = simplexml_load_string($response);
+        $response = $response->msgBody->perforInfo;
 
         /////
         /// 세부데이터를 DetailData 클래스에 넣음
         /////
         $data = new DetailData;
 
-        $data->setSeq($response->msgBody->perforInfo->seq);
-        $data->setTitle($response->msgBody->perforInfo->title);
-        $data->setStartDate($response->msgBody->perforInfo->startDate);
-        $data->setEndDate($response->msgBody->perforInfo->endDate);
-        $data->setPlace($response->msgBody->perforInfo->place);
-        $data->setRealmName($response->msgBody->perforInfo->realmName);
-        $data->setArea($response->msgBody->perforInfo->area);
-        $data->setSubTitle($response->msgBody->perforInfo->subTitle);
-        $data->setPrice($response->msgBody->perforInfo->price);
-        $data->setContents1($response->msgBody->perforInfo->contents1);
-        $data->setContents2($response->msgBody->perforInfo->contents2);
-        $data->setUrl($response->msgBody->perforInfo->url);
-        $data->setPhone($response->msgBody->perforInfo->phone);
-        $data->setImgUrl($response->msgBody->perforInfo->url);
-        $data->setGpsX($response->msgBody->perforInfo->gpsX);
-        $data->setGpsY($response->msgBody->perforInfo->gpsY);
-        $data->setPlaceUrl($response->msgBody->perforInfo->placeUrl);
-        $data->setPlaceAddr($response->msgBody->perforInfo->placeAddr);
-        $data->setPlaceSeq($response->msgBody->perforInfo->placeSeq);
-
-        echo $data->getSeq()."<br>";
-        echo $data->getTitle()."<br>";
-        echo $data->getStartDate()."<br>";
+        $data->setSeq($response->seq);
+        $data->setTitle($response->title);
+        $data->setStartDate($response->startDate);
+        $data->setEndDate($response->endDate);
+        $data->setPlace($response->place);
+        $data->setRealmName($response->realmName);
+        $data->setArea($response->area);
+        $data->setSubTitle($response->subTitle);
+        $data->setPrice($response->price);
+        $data->setContents1($response->contents1);
+        $data->setContents2($response->contents2);
+        $data->setUrl($response->url);
+        $data->setPhone($response->phone);
+        $data->setImgUrl($response->imgUrl);
+        $data->setGpsX($response->gpsX);
+        $data->setGpsY($response->gpsY);
+        $data->setPlaceUrl($response->placeUrl);
+        $data->setPlaceAddr($response->placeAddr);
+        $data->setPlaceSeq($response->placeSeq);
 
         return $data;
     }

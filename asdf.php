@@ -1,11 +1,26 @@
-<?php 
+<?php
+header("Content-Type: text/html; charset=UTF-8");
 
-require_once 'DBConnect.php';
-$db = new DBConnect;
 
-$result = $db->getPerformLists();
-foreach($result as $row)
+
+$addr = "http://www.culture.go.kr/openapi/rest/publicperformancedisplays/";
+$key = "serviceKey=ZNZV1BXnl0kRebCqIy6Njuo2ZqXgy6hXzPvMOY9Iw55414T0xINWSrF%2Btx06PvMO7aClJHwjEPf0CLZT0ojhrg%3D%3D";
+
+switch($_GET['t'])
 {
+    case "r":
+        $type="realm?";
+        break;
+    case "p":
+        $type="period?";
+        break;
+    case "d":
+        $type="d/?seq=".$_GET['seq']."&";
+        break;
+    default:
+        $type="period?";
 
-	echo "<pre>".$row->getSeq()."	".$row->getTitle()."	".$row->getStartDate()."  ".$row->getEndDate()."<br></pre>";
 }
+
+header("Location: ".$addr.$type.$key);
+die();

@@ -182,5 +182,11 @@ class DatasVO
         $this->gpsY = $gpsY;
     }
 
-
+    public function toString(){
+        echo "seq : ".$this->seq."<br>";
+        echo "title : ".$this->title."<br>";
+        echo "startDate : ".$this->startDate."<br>";
+        echo "endDate : ".$this->endDate."<br>";
+        echo "place : ".$this->place."<br>";
+    }
 }

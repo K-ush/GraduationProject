@@ -377,5 +377,15 @@ class DetailData
         $this->placeSeq = $placeSeq;
     }
 
+    public function toString(){
+        $string = "seq : ".$this->seq."<br>";
+        $string .="title : ".$this->title."<br>";
+        $string .="startDate : ".$this->startDate."<br>";
+        $string .="endDate : ".$this->endDate."<br>";
+        $string .="place : ".$this->place."<br>";
+
+        return $string;
+    }
+
 
 }
