@@ -20,42 +20,7 @@ class DBConnect
     function getPerformLists($option)
     {
         $endDate = date("Ymd");
-        $query = "select * from performDatas where endDate > " . $endDate . " and realmName like '".$option."' order by seq desc limit 0, 10;";
-
-        try
-        {
-            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $result = $this->db->query($query);
-            $this->db = null; /* 연결 끊음 */
-
-            foreach ($result as $row) {
-                $datas = array(
-                    "seq"           =>$row['seq'],
-                    "title"         =>$row['title'],
-                    "startDate"     =>$row['startDate'],
-                    "endDate"       =>$row['endDate'],
-                    "place"         =>$row['place'],
-                    "realmName"     =>$row['realmName'],
-                    "area"          =>$row['area'],
-                    "thumbnail"     =>$row['thumbnail'],
-                    "gpsX"          =>$row['gpsX'],
-                    "gpsY"          =>$row['gpsY']
-                );
-                array_push($this->list, $datas);
-            }
-        }
-        catch(PDOException $e)
-        {
-            echo $e->getMessage();
-        }
-
-        return $this->list;
-    }
-    function getPerformListsByKeyword($keyword)
-    {
-        $query = "select * from performDatas where title like '%" . $keyword . "%' order by seq desc limit 0, 10;";
+        $query = "select * from performDatas where endDate > " . $endDate . " and realmName = '".$option."' order by seq desc limit 0, 10;";
 
         try
         {
@@ -137,6 +102,44 @@ class DBConnect
             }
         }
     }
+
+    function getPerformListsByKeyword($keyword)
+    {
+        $query = "select * from performDatas where title like '%" . $keyword . "%' order by seq desc limit 0, 10;";
+
+        try
+        {
+            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $result = $this->db->query($query);
+            $this->db = null; /* 연결 끊음 */
+
+            foreach ($result as $row) {
+                $datas = array(
+                    "seq"           =>$row['seq'],
+                    "title"         =>$row['title'],
+                    "startDate"     =>$row['startDate'],
+                    "endDate"       =>$row['endDate'],
+                    "place"         =>$row['place'],
+                    "realmName"     =>$row['realmName'],
+                    "area"          =>$row['area'],
+                    "thumbnail"     =>$row['thumbnail'],
+                    "gpsX"          =>$row['gpsX'],
+                    "gpsY"          =>$row['gpsY']
+                );
+                array_push($this->list, $datas);
+            }
+        }
+        catch(PDOException $e)
+        {
+            echo $e->getMessage();
+        }
+
+        return $this->list;
+    }
+
+
 
     function getDetailData($seq)
     {

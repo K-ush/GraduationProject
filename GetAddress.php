@@ -6,14 +6,19 @@
  * Time: PM 8:25
  */
 
-class getAddress
+include_once('simplehtmldom_1_5/simple_html_dom.php');
+class GetAddress
 {
-    function getAddress($area, $place)
+    function changeAddress($area, $place)
     {
-        echo $area." ".$place."<br>";
         $link = "https://www.google.co.kr/search?q=";
         $link .=$area."+".$place;
 
-        echo $link;
+        $html = file_get_html($link);
+
+        foreach($html->find("img") as $element)
+        {
+            echo $element->src;
+        }
     }
 }

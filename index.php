@@ -13,7 +13,7 @@ $dbclass = new DBConnect;
 $datas = new DataConnect;
 try
 {
-    switch($_GET['t'])
+    switch($_GET['type'])
     {
         case 'list':
             $result = $dbclass->getPerformLists($_GET['option']);
@@ -25,9 +25,7 @@ try
             break;
 
         case 'data':
-            $seq = $_GET['seq'];
-
-            $result = $dbclass->getDetailData($seq);
+            $result = $dbclass->getDetailData($_GET['seq']);
 
             $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 
@@ -35,9 +33,7 @@ try
 
             break;
         case 'search':
-            $keyword = $_GET['keyword'];
-
-            $result = $dbclass->getPerformListsByKeyword($keyword);
+            $result = $dbclass->getPerformListsByKeyword($_GET['keyword']);
 
             $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 
