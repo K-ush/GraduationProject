@@ -7,19 +7,58 @@
  */
 require_once('DBConnect.php');
 require_once('DataConnect.php');
-header("Content-Type: text/html; charset=UTF-8");
+header('Content-Type: application/json');
 
 $dbclass = new DBConnect;
 $datas = new DataConnect;
 try
 {
-    $dbclass->insertPerformData($datas->getDetailData($_GET['seq']));
+    switch($_GET['t'])
+    {
+        case 'list':
+            $result = $dbclass->getPerformLists($_GET['option']);
 
-}
-catch(Exception $e)
+            $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
+
+            echo urldecode($output);
+
+            break;
+
+        case 'data':
+            $seq = $_GET['seq'];
+
+            $result = $dbclass->getDetailData($seq);
+
+            $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
+
+            echo urldecode($output);
+
+            break;
+        case 'search':
+            $keyword = $_GET['keyword'];
+
+            $result = $dbclass->getPerformListsByKeyword($keyword);
+
+            $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
+
+            echo urldecode($output);
+
+    }
+
+
+
+}catch(Exception $e)
 {
     echo $e->getMessage();
 }
 
+/*
+ *  $groupData["memberData"] = $memberData;
 
+    // JSON Array가 포함된 Object를 문자열로 변환
+    $output =  json_encode($groupData);
+
+    // 출력
+    echo  urldecode($output);
+*/
 //$datas->getDataLists();

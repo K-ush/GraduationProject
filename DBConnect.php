@@ -17,10 +17,10 @@ class DBConnect
         require_once('DatasVO.php');
     }
 
-    function getPerformLists()
+    function getPerformLists($option)
     {
         $endDate = date("Ymd");
-        $query = "select * from performDatas where endDate < " . $endDate . " order by seq desc limit 0, 10;";
+        $query = "select * from performDatas where endDate > " . $endDate . " and realmName like '".$option."' order by seq desc limit 0, 10;";
 
         try
         {
@@ -31,19 +31,53 @@ class DBConnect
             $this->db = null; /* 연결 끊음 */
 
             foreach ($result as $row) {
-                $datas = new DatasVO();
+                $datas = array(
+                    "seq"           =>$row['seq'],
+                    "title"         =>$row['title'],
+                    "startDate"     =>$row['startDate'],
+                    "endDate"       =>$row['endDate'],
+                    "place"         =>$row['place'],
+                    "realmName"     =>$row['realmName'],
+                    "area"          =>$row['area'],
+                    "thumbnail"     =>$row['thumbnail'],
+                    "gpsX"          =>$row['gpsX'],
+                    "gpsY"          =>$row['gpsY']
+                );
+                array_push($this->list, $datas);
+            }
+        }
+        catch(PDOException $e)
+        {
+            echo $e->getMessage();
+        }
 
-                $datas->setSeq($row['seq']);
-                $datas->setTitle($row['title']);
-                $datas->setStartDate($row['startDate']);
-                $datas->setEndDate($row['endDate']);
-                $datas->setPlace($row['place']);
-                $datas->setRealmName($row['realmName']);
-                $datas->setArea($row['area']);
-                $datas->setThumbnail($row['thumbnail']);
-                $datas->setGpsX($row['gpsX']);
-                $datas->setGpsY($row['gpsY']);
+        return $this->list;
+    }
+    function getPerformListsByKeyword($keyword)
+    {
+        $query = "select * from performDatas where title like '%" . $keyword . "%' order by seq desc limit 0, 10;";
 
+        try
+        {
+            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $result = $this->db->query($query);
+            $this->db = null; /* 연결 끊음 */
+
+            foreach ($result as $row) {
+                $datas = array(
+                    "seq"           =>$row['seq'],
+                    "title"         =>$row['title'],
+                    "startDate"     =>$row['startDate'],
+                    "endDate"       =>$row['endDate'],
+                    "place"         =>$row['place'],
+                    "realmName"     =>$row['realmName'],
+                    "area"          =>$row['area'],
+                    "thumbnail"     =>$row['thumbnail'],
+                    "gpsX"          =>$row['gpsX'],
+                    "gpsY"          =>$row['gpsY']
+                );
                 array_push($this->list, $datas);
             }
         }
@@ -91,6 +125,9 @@ class DBConnect
                         $stmt->bindParam(10, $data->getGpsY());
 
                         $stmt->execute();
+
+                        $dataClass = new DataConnect();
+                        $this->insertPerformData($dataClass->getDetailData($data->getSeq()));
                     }
                 }
             }
@@ -111,38 +148,42 @@ class DBConnect
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $result = $this->db->query($query);
+            $this->db= null;
 
             foreach($result as $row)
             {
-                $data = new DetailData;
+                $datas = array(
 
-                $data->setSeq($row['seq']);
-                $data->setTitle($row['title']);
-                $data->setStartDate($row['startDate']);
-                $data->setEndDate($row['endDate']);
-                $data->setPlace($row['place']);
-                $data->setRealmName($row['realmName']);
-                $data->setArea($row['area']);
-                $data->setSubTitle($row['subTitle']);
-                $data->setPrice($row['price']);
-                $data->setContents1($row['contents1']);
-                $data->setContents2($row['contents2']);
-                $data->setUrl($row['url']);
-                $data->setPhone($row['phone']);
-                $data->setGpsX($row['gpsX']);
-                $data->setGpsY($row['gpsY']);
-                $data->setImgUrl($row['imgUrl']);
-                $data->setPlaceUrl($row['placeUrl']);
-                $data->setPlaceAddr($row['placeAddr']);
-                $data->setPlaceSeq($row['placeSeq']);
+                "seq"       =>$row['seq'],
+                "title"     =>$row['title'],
+                "startDate" =>$row['startDate'],
+                "endDate"   =>$row['endDate'],
+                "place"     =>$row['place'],
+                "realmName" =>$row['realmName'],
+                "area"      =>$row['area'],
+                "subTitle"  =>$row['subTitle'],
+                "price"     =>$row['price'],
+                "contents1" =>$row['contents1'],
+                "contents2" =>$row['contents2'],
+                "url"       =>$row['url'],
+                "phone"     =>$row['phone'],
+                "gpsX"      =>$row['gpsX'],
+                "gpsY"      =>$row['gpsY'],
+                "imgUrl"    =>$row['imgUrl'],
+                "placeUrl"  =>$row['placeUrl'],
+                "placeAddr" =>$row['placeAddr'],
+                "placeSeq"  =>$row['placeSeq']
+                );
 
-                return $data;
+                array_push($this->list, $datas);
             }
         }
         catch(PDOException $e)
         {
             echo $e->getMessage();
         }
+
+        return $this->list;
     }
 
     function insertPerformData($data)
