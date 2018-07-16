@@ -22,6 +22,7 @@ class DataConnect
         $ch = curl_init();
         $url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/period'; /*URL*/
         $queryParams = '?' . urlencode("serviceKey") . '='.$this->KEY; /*Service Key*/
+        $queryParams .= '&' . urlencode('rows') . '=100';
 
         curl_setopt($ch, CURLOPT_URL, $url . $queryParams);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -59,7 +60,6 @@ class DataConnect
         $url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/d/'; /*URL*/
         $queryParams = '?' . urlencode('ServiceKey') . '='.$this->KEY; /*Service Key*/
         $queryParams .= '&' . urlencode('seq') . '=' . $seq; /* data index */
-        echo $url.$queryParams;
 
         curl_setopt($ch, CURLOPT_URL, $url . $queryParams); // URL 연결
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);     // Return값 존재

@@ -11,6 +11,8 @@ class DBConnect
     private $db;
     private $list = [];
 
+    private $seq;
+
     function __construct()
     {
         require_once('DataConnect.php');
@@ -74,6 +76,8 @@ class DBConnect
                 $stmt->bindParam(9, $data->getGpsX());
                 $stmt->bindParam(10, $data->getGpsY());
 
+                $this->seq = $data->getSeq();
+
                 $stmt->execute();;
 
                 $dataClass = new DataConnect();
@@ -81,7 +85,7 @@ class DBConnect
 
 
             } catch (PDOException $e) {
-                $e->getMessage();
+                echo $e->getMessage()." / seq = ".$this->seq."\n";
             }
         }
     }
