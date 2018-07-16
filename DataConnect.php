@@ -41,7 +41,7 @@ class DataConnect
             $data->setStartDate($array->startDate);
             $data->setEndDate($array->endDate);
             $data->setPlace($array->place);
-            $data->setRealmName($array->realmNamme);
+            $data->setRealmName($array->realmName);
             $data->setArea($array->area);
             $data->setThumbnail($array->thumbnail);
             $data->setGpsX($array->gpsX);
@@ -58,7 +58,8 @@ class DataConnect
         $ch = curl_init();
         $url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/d/'; /*URL*/
         $queryParams = '?' . urlencode('ServiceKey') . '='.$this->KEY; /*Service Key*/
-        $queryParams .= '&' . urlencode('seq') . '=' . urlencode($seq); /* data index */
+        $queryParams .= '&' . urlencode('seq') . '=' . $seq; /* data index */
+        echo $url.$queryParams;
 
         curl_setopt($ch, CURLOPT_URL, $url . $queryParams); // URL 연결
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);     // Return값 존재

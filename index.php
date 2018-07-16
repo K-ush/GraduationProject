@@ -38,7 +38,15 @@ try
             $output = json_encode($result, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 
             echo urldecode($output);
+            break;
 
+        case 'insert':
+            $result = $datas->getDataLists();
+
+            $dbclass->insertPerformList($result);
+
+            echo "insertPerformList execute";
+            break;
     }
 
 
