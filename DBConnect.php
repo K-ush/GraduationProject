@@ -8,7 +8,6 @@
 
 class DBConnect
 {
-    private $db;
     private $list = [];
 
     private $seq;
@@ -18,18 +17,24 @@ class DBConnect
         require_once('DataConnect.php');
         require_once('DatasVO.php');
     }
+    
+    static function getDB()
+    {
+        $db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    function getPerformLists($option)
+        return $db;
+    }
+
+    function getPerformLists($option, $db)
     {
         $endDate = date("Ymd");
         $query = "select * from performDatas where endDate > " . $endDate . " and realmName = '" . $option . "' order by seq desc limit 0, 10;";
 
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $result = $this->db->query($query);
-            $this->db = null; /* 연결 끊음 */
+            
+            $result = $db->query($query);
+            $db = null; /* 연결 끊음 */
 
             foreach ($result as $row) {
                 $datas = array(
@@ -53,17 +58,13 @@ class DBConnect
         return $this->list;
     }
 
-    function insertPerformList($datas) // $datas -> DatasVO 객체가 들어있는 배열
+    function insertPerformList($datas, $db) // $datas -> DatasVO 객체가 들어있는 배열
     {
         foreach ($datas as $data) {
             try {
-                $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-                $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-
                 $query = "insert into performDatas(seq, title, startdate, enddate, place, realmName, area, thumbnail, gpsx, gpsY) "
                          . "values (?,?,?,?,?,?,?,?,?,?)";
-                $stmt = $this->db->prepare($query);
+                $stmt = $db->prepare($query);
 
                 $stmt->bindParam(1, $data->getSeq());
                 $stmt->bindParam(2, $data->getTitle());
@@ -90,16 +91,12 @@ class DBConnect
         }
     }
 
-    function getPerformListsByKeyword($keyword)
+    function getPerformListsByKeyword($keyword, $db)
     {
         $query = "select * from performDatas where title like '%" . $keyword . "%' order by seq desc limit 0, 10;";
 
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $result = $this->db->query($query);
-            $this->db = null; /* 연결 끊음 */
+            $result = $db->query($query);
 
             foreach ($result as $row) {
                 $datas = array(
@@ -124,16 +121,13 @@ class DBConnect
     }
 
 
-    function getDetailData($seq)
+    function getDetailData($seq, $db)
     {
         $query = "select * from detailDatas where seq = " . $seq;
 
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $result = $this->db->query($query);
-            $this->db = null;
+            $result = $db->query($query);
+            $db = null;
 
             foreach ($result as $row) {
                 $datas = array(
@@ -168,16 +162,13 @@ class DBConnect
         return $this->list;
     }
 
-    function insertPerformData($data)
+    function insertPerformData($data, $db)
     {
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=seungh;charset=utf8mb4', 'seungh', 'jgd486952317');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             $query = "insert into detailDatas(seq, title, startDate, endDate, place, realmName, area, subTitle, price, contents1, contents2, url, phone, gpsX, gpsY, imgUrl, placeUrl, placeAddr, placeSeq) "
                 . "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-            $stmt = $this->db->prepare($query);
+            $stmt = $db->prepare($query);
 
             $stmt->bindParam(1, $data->getSeq());
             $stmt->bindParam(2, $data->getTitle());

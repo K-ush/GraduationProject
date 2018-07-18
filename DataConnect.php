@@ -22,6 +22,7 @@ class DataConnect
         $ch = curl_init();
         $url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/period'; /*URL*/
         $queryParams = '?' . urlencode("serviceKey") . '='.$this->KEY; /*Service Key*/
+        $queryParams .= '&' . urlencode('cPage') . '=2';
         $queryParams .= '&' . urlencode('rows') . '=100';
 
         curl_setopt($ch, CURLOPT_URL, $url . $queryParams);
